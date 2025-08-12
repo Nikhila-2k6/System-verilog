@@ -1,0 +1,81 @@
+// Code your design here
+module subtractor(a,b,d,borrow);
+  input a,b;
+  output d,borrow;
+  assign d=a^b;
+  assign borrow=((~a)&b);
+endmodule
+
+interface inf;
+  logic a;
+  logic b;
+  logic d;
+  logic borrow;
+endinterface
+
+//testbench code
+// Code your testbench here
+// or browse Examples
+class generator;
+  logic a,b;
+  mailbox mbx;
+  task run();
+    $display("generated data=%0d",a,b);
+    for(int i=0;i<4;i++) begin
+      {a,b}=i;mbx.put({a,b});
+      #10;
+    end
+  endtask
+endclass
+
+class driver;
+  logic a,b;
+  virtual inf vif;
+  logic [1:0]data;
+  mailbox mbx;
+  task run();
+    
+    repeat(4) begin
+      
+       mbx.get(data);
+       a=data[1];
+       b=data[0];
+       vif.a=a;
+       vif.b=b;
+      #10;
+       $display("a=%0b,b=%0b,d=%0b,borrow=%0b",a,b,vif.d,vif.borrow);
+    end
+  endtask
+endclass
+
+module tb;
+  inf inter();
+  generator gen;
+  driver div;
+  mailbox mbx;
+  subtractor u1(.a(inter.a),.b(inter.b),.d(inter.d),.borrow(inter.borrow));
+  initial begin
+  	
+  	gen=new();
+ 	div=new();
+  	mbx=new();
+    div.vif= inter;
+  	gen.mbx=mbx;
+  	div.mbx=mbx;
+    fork
+      gen.run();
+      div.run();
+    join
+  end
+endmodule
+
+//output
+a=0,b=0,d=0,borrow=0
+a=0,b=1,d=1,borrow=1
+a=1,b=0,d=1,borrow=0
+a=1,b=1,d=0,borrow=0
+  
+  
+
+
+//output
