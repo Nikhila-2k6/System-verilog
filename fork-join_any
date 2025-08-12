@@ -1,0 +1,38 @@
+//join_any
+// Code your testbench here
+// or browse Examples
+module tb;
+  task one();
+    $display("task one started=%0t",$time);
+    #10;
+    $display("task one ended=%0t",$time);
+  endtask
+  task two();
+    $display("task two started=%0t",$time);
+    #20;
+    $display("task two ended=%0t",$time);
+  endtask
+  task three();
+    $display("task three started=%0t",$time);
+    #10;
+    $display("task three ended=%0t",$time);
+  endtask
+  initial
+    begin
+      fork
+        one();
+        three();
+      join_any
+      two();
+    end
+endmodule
+
+//output
+# KERNEL: task one started=0
+# KERNEL: task three started=0
+# KERNEL: task one ended=10
+# KERNEL: task two started=10
+# KERNEL: task three ended=10
+# KERNEL: task two ended=30
+
+//
