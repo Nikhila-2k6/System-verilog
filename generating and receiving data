@@ -1,0 +1,53 @@
+//generating and receiving data
+// Code your testbench here
+// or browse Examples
+module tb;
+  int data1,data2;
+  event done;
+  task generator();
+     for(int i=0;i<8;i++)begin
+          data1=$random();
+          $display("generated data=%0d",data1);
+          #1;
+          #9;
+      end
+      ->done;
+  endtask
+  task driver();
+    forever begin
+      #10;
+      data2=data1;
+      $display("received data=%0d",data2);
+    end
+  endtask
+  task wait_event();
+    wait(done.triggered);
+    $finish;
+  endtask
+  initial
+    begin
+       fork
+		generator();
+    	driver();
+    	wait_event();
+ 	 join
+    end
+endmodule
+
+//output
+# KERNEL: generated data=303379748
+# KERNEL: received data=303379748
+# KERNEL: generated data=-1064739199
+# KERNEL: received data=-1064739199
+# KERNEL: generated data=-2071669239
+# KERNEL: received data=-2071669239
+# KERNEL: generated data=-1309649309
+# KERNEL: received data=-1309649309
+# KERNEL: generated data=112818957
+# KERNEL: received data=112818957
+# KERNEL: generated data=1189058957
+# KERNEL: received data=1189058957
+# KERNEL: generated data=-1295874971
+# KERNEL: received data=-1295874971
+# KERNEL: generated data=-1992863214
+# KERNEL: received data=-1992863214
