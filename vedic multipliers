@@ -1,0 +1,215 @@
+// Code your design here
+// Code your design here
+module vedic(
+  input [1:0] a,b,
+  output [3:0] out
+);
+  wire p1,p2,p3,p4,s1,c1,s2,c2;
+  assign p1=a[0]&b[0];
+  assign p2=a[0]&b[1];
+  assign p3=a[1]&b[0];
+  assign p4=a[1]&b[1];
+  assign s1=p2^p3;
+  assign c1=p2&p3;
+  assign s2=p4^c1;
+  assign c2=p4&c1;
+  
+  assign out={c2,s2,s1,p1};
+endmodule
+module vedic_4_4(
+  input [3:0] a,b,
+  output [7:0] out);
+  wire [3:0] p1,p2,p3,p4;
+  vedic u1(a[1:0],b[1:0],p1);
+  vedic u2(a[1:0],b[3:2],p2);
+  vedic u3(a[3:2],b[1:0],p3);
+  vedic u4(a[3:2],b[3:2],p4);
+  assign out=p1+((p2+p3)<<2)+(p4<<4);
+endmodule
+//8*8
+module vedic_8_8(
+  input [7:0] a,b,
+  output [15:0] out);
+  wire [7:0] p1,p2,p3,p4;
+  vedic_4_4 u1(a[3:0],b[3:0],p1);
+  vedic_4_4 u2(a[3:0],b[7:4],p2);
+  vedic_4_4 u3(a[7:4],b[3:0],p3);
+  vedic_4_4 u4(a[7:4],b[7:4],p4);
+  
+  assign out=p1+((p2+p3)<<4)+(p4<<8);
+endmodule
+// 8*8_2
+module vedic2_8_8(
+  input [7:0] a,b,
+  output [15:0] out);
+  wire[3:0] p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16;
+  wire [7:0] w1,w2,w3,w4;
+  vedic u1(a[1:0],b[1:0],p1);
+  vedic u2(a[1:0],b[3:2],p2);
+  vedic u3(a[3:2],b[1:0],p3);
+  vedic u4(a[3:2],b[3:2],p4);
+  vedic u5(a[1:0],b[5:4],p5);
+  vedic u6(a[1:0],b[7:6],p6);
+  vedic u7(a[3:2],b[5:4],p7);
+  vedic u8(a[3:2],b[7:6],p8);
+  vedic u9(a[5:4],b[1:0],p9);
+  vedic u10(a[5:4],b[3:2],p10);
+  vedic u11(a[7:6],b[1:0],p11);
+  vedic u12(a[7:6],b[3:2],p12);
+  vedic u13(a[5:4],b[5:4],p13);
+  vedic u14(a[5:4],b[7:6],p14);
+  vedic u15(a[7:6],b[5:4],p15);
+  vedic u16(a[7:6],b[7:6],p16);
+  assign w1=p1+((p2+p3)<<2)+(p4<<4);
+  assign w2=p5+((p6+p7)<<2)+(p8<<4);
+  assign w3=p9+((p10+p11)<<2)+(p12<<4);
+  assign w4=p13+((p14+p15)<<2)+(p16<<4);
+  assign out=w1+((w2+w3)<<4)+(w4<<8);
+endmodule
+
+//16*16
+module vedic16x16(input[15:0]a,b,output[31:0]y);
+  wire [15:0]p0,p1,p2,p3;
+  
+  vedic_8_8 m1(a[7:0],b[7:0],p0);
+  vedic_8_8 m2(a[7:0],b[15:8],p1);
+  vedic_8_8 m3(a[15:8],b[7:0],p2);
+  vedic_8_8 m4(a[15:8],b[15:8],p3);
+  
+  assign y=p0+((p1+p2)<<8)+(p3<<16);
+endmodule
+//16x16 using 4x4
+module vedic2_16x16(
+  input [15:0] a,b,
+  output [31:0] y);
+  wire [7:0] p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15,p16;
+  wire [15:0] w1,w2,w3,w4;
+  vedic_4_4 u1(a[3:0],b[3:0],p1);
+  vedic_4_4 u2(a[3:0],b[7:4],p2);
+  vedic_4_4 u3(a[7:4],b[3:0],p3);
+  vedic_4_4 u4(a[7:4],b[7:4],p4);
+  vedic_4_4 u5(a[3:0],b[11:8],p5);
+  vedic_4_4 u6(a[3:0],b[15:12],p6);
+  vedic_4_4 u7(a[7:4],b[11:8],p7);
+  vedic_4_4 u8(a[7:4],b[15:12],p8);
+  vedic_4_4 u9(a[11:8],b[3:0],p9);
+  vedic_4_4 u10(a[11:8],b[7:4],p10);
+  vedic_4_4 u11(a[15:12],b[3:0],p11);
+  vedic_4_4 u12(a[15:12],b[7:4],p12);
+  vedic_4_4 u13(a[11:8],b[11:8],p13);
+  vedic_4_4 u14(a[11:8],b[15:12],p14);
+  vedic_4_4 u15(a[15:12],b[11:8],p15);
+  vedic_4_4 u16(a[15:12],b[15:12],p16);
+  assign w1=p1+((p2+p3)<<4)+(p4<<8);
+  assign w2=p5+((p6+p7)<<4)+(p8<<8);
+  assign w3=p9+((p10+p11)<<4)+(p12<<8);
+  assign w4=p13+((p14+p15)<<4)+(p16<<8);
+  assign y=w1+((w2+w3)<<8)+(w4<<16);
+endmodule
+//32*32
+module vedic32x32(
+  input [31:0] a,b,
+  output [63:0] y);
+  wire [31:0] p0,p1,p2,p3;
+  vedic16x16 u1(a[15:0],b[15:0],p0);
+  vedic16x16 u2(a[15:0],b[31:16],p1);
+  vedic16x16 u3(a[31:16],b[15:0],p2);
+  vedic16x16 u4(a[31:16],b[31:16],p3);
+  assign y=p0+((p1+p2)<<16)+(p3<<32);
+endmodule
+
+//testbench
+// Code your testbench here
+// or browse Examples
+
+module tb;
+  reg [1:0] a,b;
+  wire [3:0] out;
+  vedic u1(.a(a),.b(b),.out(out));
+  initial
+    begin
+      $monitor("a=%0b b=%0b out=%0b",a,b,out);
+      a='d2; b='d2;
+    end
+endmodule
+module vedic_4_4_tb;
+  reg [3:0] a,b;
+  wire [7:0] out;
+  vedic_4_4 u2(.a(a),.b(b),.out(out));
+  initial
+    begin
+      $monitor("a=%0d,b=%0d,out=%0d",a,b,out);
+      a='b1111;b='b1111;#10;
+    end
+endmodule 
+module vedic_8_8_tb;
+  reg [7:0] a,b;
+  wire [15:0] out;  
+  vedic_8_8 u3(.a(a),.b(b),.out(out));
+  initial
+    begin
+      $monitor("a=%0d,b=%0d,out=%0d",a,b,out);
+      a='d114;b='d14;#1;
+      a='d113;b='d13;#1;
+    end
+endmodule
+
+//tb for 8*8 using 2*2
+module vedic2_8_8_tb;
+  reg [7:0] a,b;
+  wire [15:0] out;
+  vedic2_8_8 u3(.a(a),.b(b),.out(out));
+  initial
+    begin
+      $monitor("t=%0t,a=%0d,b=%0d,out=%0d",$time,a,b,out);
+      a='d214;b='d14;#1;
+      a='d213;b='d13;#1;
+    end
+endmodule
+module tb1;
+  wire[31:0]y;
+  reg[15:0]a,b;
+ vedic16x16 u1(.a(a),.b(b),.y(y));
+  initial
+    begin
+      $monitor("a=%0d b=%0d y=%0d(%0b)",a,b,y,y);
+  	  a=16'b11001100110011001100110011001100;b=16'b10101010101010101010101010101010;
+     
+      #10;
+      $finish;
+      
+    end
+endmodule
+module vedic32x32tb;
+  reg [31:0] a,b;
+  wire [63:0] y;
+  vedic32x32 u1(.a(a),.b(b),.y(y));
+  initial
+    begin
+      $monitor("a=%0d,b=%0d,y=%0d",a,b,y);
+      a='b11001100110011001100110011001100;b='b00110011001100110011001100110011;
+      #15;
+      $finish;
+    end
+endmodule
+
+module vedic2_16x16tb;
+  reg [15:0] a,b;
+  wire [31:0] y;
+  vedic2_16x16 u1(.a(a),.b(b),.y(y));
+  initial
+    begin
+      $monitor("a=%0d,b=%0d,y=%0d",a,b,y); a='b11001100110011001100110011001100;b='b00110011001100110011001100110011;
+    end
+endmodule
+
+//output
+# KERNEL: a=10 b=10 out=100
+# KERNEL: a=52428 b=43690 y=2290579320(10001000100001110111011101111000)
+# KERNEL: a=52428,b=13107,y=687173796
+# KERNEL: t=0,a=214,b=14,out=2996
+# KERNEL: a=3435973836,b=858993459,y=2951479050419138724
+# KERNEL: a=15,b=15,out=225
+# KERNEL: a=114,b=14,out=1596
+# KERNEL: t=1,a=213,b=13,out=2769
+# KERNEL: a=113,b=13,out=1469
